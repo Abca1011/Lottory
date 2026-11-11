@@ -18,8 +18,9 @@ export async function exportWorkbook(parsed:Parsed,options:ExportOptions={}){
  const end=Math.max(63,parsed.lines.length+3);
  // Saved bills are aggregated into one summary row; details retain source lines.
  const rowByLine=new Map<number,number>();
+ const billNumber=(source:number,fallback:number)=>{const match=parsed.billNames?.[source]?.match(/^la\((\d+)\)$/);return match?Number(match[1]):fallback;};
  for(let r=4;r<=end;r++){for(let col=1;col<=11;col++){const cell=ws.getCell(r,col);if(r>63)cell.style=structuredClone(ws.getCell(63,col).style);cell.value=null;}if(r>63)ws.getRow(r).height=ws.getRow(63).height;}
- parsed.lines.forEach((line,i)=>{const row=i+4;rowByLine.set(line.line,row);ws.getCell(row,1).value=parsed.billNames?.[line.line]??i+1;ws.getCell(row,2).value=line.total;});
+ parsed.lines.forEach((line,i)=>{const row=i+4;rowByLine.set(line.line,row);ws.getCell(row,1).value=billNumber(line.line,i+1);ws.getCell(row,2).value=line.total;});
  const cols:Record<BetType,string>={top3:'D',tod3:'E',top2:'F',bottom2:'G'};
  if(checked){for(const win of checked.wins){const c=ws.getCell(cols[win.type]+rowByLine.get(win.source));c.value=Math.round((Number(c.value??0)+win.amount)*100)/100;}}
  const summaryCols=['D','E','F','G','H','I','J','K'];
@@ -44,7 +45,7 @@ export async function exportWorkbook(parsed:Parsed,options:ExportOptions={}){
  const detail=wb.addWorksheet('รายละเอียด');
  detail.columns=[{header:'บิล',key:'bill',width:9},{header:'บรรทัดต้นฉบับ',key:'source',width:18},{header:'เลข',key:'number',width:12},{header:'ประเภท',key:'type',width:18},{header:'ยอดซื้อ',key:'amount',width:16},{header:'ผลตรวจ',key:'status',width:17},{header:'ยอดจ่าย (ปัดเศษ/รายการ)',key:'payout',width:28}];
  const wins=new Map(checked?.wins.map(w=>[w.index,w])??[]);
- parsed.bets.forEach((bet,i)=>detail.addRow({bill:parsed.billNames?.[bet.source]??rowByLine.get(bet.source)!-3,source:bet.originalSource??bet.source,number:bet.number,type:labels[bet.type],amount:bet.amount,status:checked?(wins.has(i)?'ถูก':'ไม่ถูก'):'ยังไม่ได้ตรวจ',payout:checked?(wins.get(i)?.payout??0):null}));
+ parsed.bets.forEach((bet,i)=>detail.addRow({bill:billNumber(bet.source,rowByLine.get(bet.source)!-3),source:bet.originalSource??bet.source,number:bet.number,type:labels[bet.type],amount:bet.amount,status:checked?(wins.has(i)?'ถูก':'ไม่ถูก'):'ยังไม่ได้ตรวจ',payout:checked?(wins.get(i)?.payout??0):null}));
  detail.getColumn('number').numFmt='@';detail.getColumn('amount').numFmt='#,##0.00';detail.getColumn('payout').numFmt='#,##0.00';
  detail.eachRow((row,n)=>{row.height=24;row.eachCell(cell=>{cell.font={name:'Tahoma',size:11,color:{argb:n===1?'FFFFFFFF':'FF234B3E'}};cell.alignment={vertical:'middle'};if(n===1)cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF234B3E'}};});});
  for(let r=4;r<=end;r++)for(let col=2;col<=11;col++){const c=ws.getCell(r,col);c.numFmt='#,##0.00';c.alignment={...c.alignment,shrinkToFit:true};}

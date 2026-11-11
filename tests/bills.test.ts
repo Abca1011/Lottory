@@ -13,10 +13,10 @@ it('exports one summary row per bill and groups winning stakes in that row',asyn
  const p=calculateBills(bills),wb=new ExcelJS.Workbook();
  await wb.xlsx.load(await exportWorkbook(p,{result:{top3:'001',bottom2:'99'},rates:{top3:500,tod3:100,top2:70,bottom2:70}}));
  const sheet=wb.worksheets[0],detail=wb.worksheets[1];
- expect(sheet.getCell('A4').value).toBe('la(1)');expect(sheet.getCell('B4').value).toBe(64);
- expect(sheet.getCell('A5').value).toBe('la(7)');expect(sheet.getCell('B5').value).toBe(50);
+ expect(sheet.getCell('A4').value).toBe(1);expect(sheet.getCell('B4').value).toBe(64);
+ expect(sheet.getCell('A5').value).toBe(7);expect(sheet.getCell('B5').value).toBe(50);
  expect(sheet.getCell('B6').value).toBeNull();expect(sheet.getCell('F5').value).toBe(20);
- expect(detail.getCell('A8').value).toBe('la(1)');expect(detail.getCell('B8').value).toBe(4);
+ expect(detail.getCell('A8').value).toBe(1);expect(detail.getCell('B8').value).toBe(4);
  expect(detail.getCell('C10').value).toBe('01');
 });
 it('rejects duplicate bill IDs and empty or invalid saved slips',()=>{
