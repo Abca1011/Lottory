@@ -1,0 +1,45 @@
+{
+  "name": "lottory",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build:server && concurrently \"npm run build:server -- --watch\" \"node --watch dist-server/index.js\" \"vite --config web/vite.config.ts\"",
+    "build": "npm run build:server && vite build --config web/vite.config.ts",
+    "start": "node dist-server/index.js",
+    "test": "vitest run",
+    "typecheck": "vue-tsc --noEmit",
+    "build:server": "esbuild server/index.ts --bundle --platform=node --packages=external --format=esm --outfile=dist-server/index.js"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "5.2.4",
+    "@vueuse/core": "latest",
+    "concurrently": "latest",
+    "cors": "latest",
+    "dotenv": "latest",
+    "exceljs": "latest",
+    "express": "latest",
+    "express-rate-limit": "latest",
+    "multer": "latest",
+    "pinia": "latest",
+    "sharp": "latest",
+    "tesseract.js": "latest",
+    "vue": "latest",
+    "vue-i18n": "latest"
+  },
+  "devDependencies": {
+    "@types/cors": "latest",
+    "@types/express": "latest",
+    "@types/multer": "latest",
+    "@types/node": "latest",
+    "typescript": "5.9.3",
+    "vite": "6.3.6",
+    "vitest": "3.2.4",
+    "vue-tsc": "latest",
+    "tailwindcss": "3.4.17",
+    "postcss": "8.5.6",
+    "esbuild": "0.28.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

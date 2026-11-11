@@ -1,0 +1,3 @@
+import {createApp} from 'vue';import {createPinia} from 'pinia';import {createI18n} from 'vue-i18n';import App from './App.vue';import './style.css';
+const messages={th:{input:'กรอกโพย',export:'ส่งออก Excel',total:'ยอดรวมทั้งหมด',details:'รายการที่คำนวณแล้ว',check:'ตรวจผลรางวัล',settings:'ตั้งค่า',help:'ตัวอย่างการกรอก',extract:'อ่านข้อความจากรูป',subtitle:'ตรวจยอดให้ครบ จบในหน้าจอเดียว'},en:{input:'Slip input',export:'Export Excel',total:'Grand total',details:'Calculated entries',check:'Check results',settings:'Settings',help:'Try an example',extract:'Extract image text',subtitle:'Every entry, every total. All in one place.'}};
+createApp(App).use(createPinia()).use(createI18n({legacy:false,locale:'th',fallbackLocale:'th',messages})).mount('#app');

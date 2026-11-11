@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+reference/transfer/
+outputs/
+*.log
+.npm-cache/
+reference/qa/
+reference/ocr-cache/
+dist-server/
