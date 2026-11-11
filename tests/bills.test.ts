@@ -3,6 +3,15 @@ import ExcelJS from 'exceljs';
 import {calculateBills} from '../packages/core/bills';
 import {exportWorkbook} from '../server/export';
 const bills=[{id:1,text:'36\n63\n39\n93=8*8',options:{}},{id:7,text:'01=20\n02=30',options:{}}];
+it('writes checked winning stakes and total payout for every bet type into Excel',async()=>{
+ const parsed=calculateBills([{id:12,text:'123=10*20\n23=30\nล่าง\n99=40',options:{permutationRule:false}}]);
+ const wb=new ExcelJS.Workbook();
+ await wb.xlsx.load(await exportWorkbook(parsed,{result:{top3:'123',bottom2:'99'},rates:{top3:500,tod3:100,top2:70,bottom2:70}}));
+ const ws=wb.worksheets[0];
+ expect(ws.getCell('A4').value).toBe(12);expect(ws.getCell('B4').value).toBe(100);
+ expect(['D4','E4','F4','G4'].map(cell=>ws.getCell(cell).value)).toEqual([10,20,30,40]);
+ expect((ws.getCell('Q11').value as {result:number}).result).toBe(11900);
+});
 it('groups multiple input lines into a saved bill and retains their source lines',()=>{
  const p=calculateBills(bills);
  expect(p.total).toBe(114);expect(p.lines).toEqual([{line:1,total:64},{line:2,total:50}]);
